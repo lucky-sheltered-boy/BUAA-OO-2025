@@ -1,0 +1,316 @@
+@startuml
+' 设置全局样式，例如隐藏空的属性和方法
+hide empty attributes
+hide empty methods
+
+' 声明接口
+interface NetworkInterface
+interface PersonInterface
+interface TagInterface
+interface MessageInterface
+interface OfficialAccountInterface
+interface EmojiMessageInterface
+interface ForwardMessageInterface
+interface RedEnvelopeMessageInterface
+
+' 声明类
+class Network {
+  - HashMap<Integer, PersonInterface> persons
+  - HashMap<Integer, OfficialAccountInterface> accounts
+  - HashMap<Integer, PersonInterface> articles
+  - int tripleSum
+  - int coupleSum
+  - boolean dirtySignForCoupleSum
+  - HashMap<Integer, MessageInterface> messages
+  - HashMap<Integer, Integer> emojiId2Heat
+  - HashMap<Integer, ArrayList<Integer>> emojiId2MessageId
+  - HashSet<TagInterface> tagList
+  -- Methods --
+  + Network()
+  + containsPerson(int id) : boolean
+  + getPerson(int id) : PersonInterface
+  + addPerson(PersonInterface person) : void
+  + addRelation(int id1, int id2, int value) : void
+  + modifyRelation(int id1, int id2, int value) : void
+  + queryValue(int id1, int id2) : int
+  + isCircle(int id1, int id2) : boolean
+  + queryTripleSum() : int
+  + addTag(int personId, TagInterface tag) : void
+  + addPersonToTag(int personId1, int personId2, int tagId) : void
+  + queryTagValueSum(int personId, int tagId) : int
+  + queryTagAgeVar(int personId, int tagId) : int
+  + delPersonFromTag(int personId1, int personId2, int tagId) : void
+  + delTag(int personId, int tagId) : void
+  + queryBestAcquaintance(int id) : int
+  + getNumOfSameLinkedPersons(int id1, int id2) : int
+  + queryCoupleSum() : int
+  + queryShortestPath(int id1, int id2) : int
+  + containsAccount(int id) : boolean
+  + createOfficialAccount(int personId, int accountId, String name) : void
+  + deleteOfficialAccount(int personId, int accountId) : void
+  + containsArticle(int id) : boolean
+  + contributeArticle(int personId, int accountId, int articleId) : void
+  + deleteArticle(int personId, int accountId, int articleId) : void
+  + followOfficialAccount(int personId, int accountId) : void
+  + queryBestContributor(int id) : int
+  + queryReceivedArticles(int personId) : ArrayList<Integer>
+  + containsMessage(int id) : boolean
+  + containsEmojiId(int id) : boolean
+  + addMessage(MessageInterface message) : void
+  + getMessage(int id) : MessageInterface
+  + querySocialValue(int id) : int
+  + queryReceivedMessages(int id) : ArrayList<MessageInterface>
+  + storeEmojiId(int id) : void
+  + queryMoney(int id) : int
+  + queryPopularity(int id) : int
+  + deleteColdEmoji(int limit) : int
+  + sendMessage(int id) : void
+  + getMessages() : MessageInterface[]
+  + getEmojiIdList() : int[]
+  + getEmojiHeatList() : int[]
+}
+
+class Person {
+  - int id
+  - String name
+  - int age
+  - HashMap<Integer, PersonInterface> acquaintance
+  - HashMap<Integer, Integer> value
+  - HashMap<Integer, TagInterface> tags
+  - ArticleNode articleHead
+  - HashMap<Integer, ArrayList<ArticleNode>> articleNodes
+  - int bestAcquaintanceId
+  - int bestAcquaintanceValue
+  - int socialValue
+  - int money
+  - ArrayList<MessageInterface> messages
+  - int numOfArticleNode
+  -- Methods --
+  + Person(int id, String name, int age)
+  + getId() : int
+  + getName() : String
+  + getAge() : int
+  + containsTag(int id) : boolean
+  + getTag(int id) : TagInterface
+  + addTag(TagInterface tag) : void
+  + delTag(int id) : void
+  + equals(Object obj) : boolean
+  + isLinked(PersonInterface person) : boolean
+  + queryValue(PersonInterface person) : int
+  + addRelation(PersonInterface person, int value) : void
+  + modifyRelation(PersonInterface person, int value, boolean setFlag) : void
+  + isCircle(PersonInterface person, HashMap<PersonInterface, Integer> visited) : boolean
+  + getAcquaintance() : HashMap<Integer, PersonInterface>
+  + getAcquaintanceSize() : int
+  + getBestAcquaintance() : int
+  + getNumOfSameLinkedPersons(PersonInterface person) : int
+  + strictEquals(PersonInterface person) : boolean
+  + getShortestPath(PersonInterface person) : int
+  + getReceivedArticles() : ArrayList<Integer>
+  + queryReceivedArticles() : ArrayList<Integer>
+  + addArticleToFirst(int articleId) : void
+  + delArticle(int articleId) : void
+  + getTags() : HashMap<Integer, TagInterface>
+  + addSocialValue(int num) : void
+  + getSocialValue() : int
+  + addMoney(int num) : void
+  + getMoney() : int
+  + getMessages() : ArrayList<MessageInterface>
+  + getReceivedMessages() : ArrayList<MessageInterface>
+  + addMessageToFirst(MessageInterface message) : void
+}
+
+class Tag {
+  - int id
+  - int sum
+  - int count
+  - HashMap<Integer, PersonInterface> persons
+  - int valueSum
+  -- Methods --
+  + Tag(int id)
+  + getId() : int
+  + equals(Object obj) : boolean
+  + addPerson(PersonInterface person) : void
+  + hasPerson(PersonInterface person) : boolean
+  + getValueSum() : int
+  + getAgeMean() : int
+  + getAgeVar() : int
+  + delPerson(PersonInterface person) : void
+  + getSize() : int
+  + addValueSum(int value) : void
+  + getPersons() : HashMap<Integer, PersonInterface>
+  + addSocialValue(int num) : void
+  + addMoney(int num) : void
+  + addArticleToAll(int articleId) : void
+  + addMessageToAll(MessageInterface message) : void
+}
+
+class OfficialAccount {
+  - int ownerId
+  - int id
+  - String name
+  - HashMap<Integer, PersonInterface> followers
+  - HashMap<Integer, Integer> contributions
+  - HashMap<Integer, PersonInterface> articles
+  - int bestContributorid
+  - int bestContributorValue
+  -- Methods --
+  + OfficialAccount(int ownerId, int id, String name)
+  + getOwnerId() : int
+  + addFollower(PersonInterface person) : void
+  + containsFollower(PersonInterface person) : boolean
+  + addArticle(PersonInterface person, int id) : void
+  + containsArticle(int id) : boolean
+  + removeArticle(int id) : void
+  + getBestContributor() : int
+  + addArticleToAllFollowers(int articleId) : void
+  + delArticle(int articleId) : void
+}
+
+class Message {
+  - int type
+  - TagInterface tag
+  - int id
+  - int socialValue
+  - PersonInterface person1
+  - PersonInterface person2
+  -- Methods --
+  + Message(int messageId, int messageSocialValue, PersonInterface messagePerson1, PersonInterface messagePerson2)
+  + Message(int messageId, int messageSocialValue, PersonInterface messagePerson1, TagInterface messageTag)
+  + getType() : int
+  + getId() : int
+  + getSocialValue() : int
+  + getPerson1() : PersonInterface
+  + getPerson2() : PersonInterface
+  + getTag() : TagInterface
+  + equals(Object obj) : boolean
+}
+
+class ForwardMessage {
+  - int type
+  - TagInterface tag
+  - int id
+  - PersonInterface person1
+  - PersonInterface person2
+  - int articleId
+  -- Methods --
+  + ForwardMessage(int messageId, int article, PersonInterface messagePerson1, PersonInterface messagePerson2)
+  + ForwardMessage(int messageId, int article, PersonInterface messagePerson1, TagInterface messageTag)
+  + getType() : int
+  + getTag() : TagInterface
+  + getId() : int
+  + getPerson1() : PersonInterface
+  + getPerson2() : PersonInterface
+  + getArticleId() : int
+  + equals(Object obj) : boolean
+  + getSocialValue() : int
+}
+
+class EmojiMessage {
+  - int type
+  - TagInterface tag
+  - int id
+  - PersonInterface person1
+  - PersonInterface person2
+  - int emojiId
+  -- Methods --
+  + EmojiMessage(int messageId, int emojiNumber, PersonInterface messagePerson1, PersonInterface messagePerson2)
+  + EmojiMessage(int messageId, int emojiNumber, PersonInterface messagePerson1, TagInterface messageTag)
+  + getEmojiId() : int
+  + getType() : int
+  + getTag() : TagInterface
+  + getId() : int
+  + getSocialValue() : int
+  + getPerson1() : PersonInterface
+  + getPerson2() : PersonInterface
+  + equals(Object obj) : boolean
+}
+
+class RedEnvelopeMessage {
+  - int type
+  - TagInterface tag
+  - int id
+  - PersonInterface person1
+  - PersonInterface person2
+  - int money
+  -- Methods --
+  + RedEnvelopeMessage(int messageId, int luckyMoney, PersonInterface messagePerson1, PersonInterface messagePerson2)
+  + RedEnvelopeMessage(int messageId, int luckyMoney, PersonInterface messagePerson1, TagInterface messageTag)
+  + getType() : int
+  + getTag() : TagInterface
+  + getId() : int
+  + getSocialValue() : int
+  + getPerson1() : PersonInterface
+  + getPerson2() : PersonInterface
+  + getMoney() : int
+  + equals(Object obj) : boolean
+}
+
+class ArticleNode {
+  - int articleId
+  - ArticleNode prev
+  - ArticleNode next
+  -- Methods --
+  + ArticleNode(int articleId)
+  + getArticleId() : int
+  + getPrev() : ArticleNode
+  + setPrev(ArticleNode prev) : void
+  + getNext() : ArticleNode
+  + setNext(ArticleNode next) : void
+}
+
+' 实现关系 (虚线三角箭)
+Network ..|> NetworkInterface
+Person ..|> PersonInterface
+Tag ..|> TagInterface
+OfficialAccount ..|> OfficialAccountInterface
+Message ..|> MessageInterface
+ForwardMessage ..|> ForwardMessageInterface
+EmojiMessage ..|> EmojiMessageInterface
+RedEnvelopeMessage ..|> RedEnvelopeMessageInterface
+
+' 接口继承关系 (实线三角箭)
+MessageInterface <|-- EmojiMessageInterface
+MessageInterface <|-- ForwardMessageInterface
+MessageInterface <|-- RedEnvelopeMessageInterface
+
+' 关联关系 (实线箭) 和 聚合/组合关系 (空心/实心菱形)
+
+' Network 聚合管理 Person, OfficialAccount, Tag, MessageInterface 的集合
+Network o-- "*" Person : persons
+Network o-- "*" OfficialAccount : accounts
+Network o-- "*" Tag : tags
+Network o-- "*" MessageInterface : messages
+' Network 的 articles 字段映射文章ID到贡献者Person
+Network o-- "*" Person : articles_contributor
+
+' Person 之间的关联 (熟人)
+Person "*" -- "*" Person : acquaintance
+
+' Person 聚合 Tag 的集合, Tag 聚合 Person 的集合 (多对多)
+Person "1" o-- "*" Tag : tags collection
+Tag "1" o-- "*" Person : persons collection
+
+' Person 与 ArticleNode 的关联 (articleHead 是链表头)
+Person "1" *-- "0..1" ArticleNode : articleHead
+' ArticleNode 形成链表 (自关联)
+ArticleNode "1" <-- "0..1" ArticleNode : prev
+ArticleNode "1" --> "0..1" ArticleNode : next
+' Person 引用 ArticleNode 的集合 (articleNodes map)
+Person "1" o-- "*" ArticleNode : articleNodes map
+
+' OfficialAccount 聚合 Follower (Person) 的集合
+OfficialAccount o-- "*" Person : followers
+' OfficialAccount 的 articles 字段映射文章ID到所有者 Person
+OfficialAccount o-- "*" Person : articles_owner
+
+' MessageInterface 关联 PersonInterface 和 TagInterface
+MessageInterface -- "1" PersonInterface : person1
+MessageInterface -- "0..1" PersonInterface : person2
+MessageInterface -- "0..1" TagInterface : tag
+
+' ForwardMessage 通过 articleId 间接关联到文章所有者 (PersonInterface)
+ForwardMessage --> PersonInterface : relates to article owner (via ID)
+
+
+@enduml
