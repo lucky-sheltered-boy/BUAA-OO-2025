@@ -1,0 +1,15 @@
+ap 1 name 18
+ap 2 name 18
+ar 1 2 10
+coa 1 101 acount
+foa 2 101
+ca 2 101 999 article
+afm 1001 999 0 1 2
+sm 1001
+qrm 2
+qra 2
+qra 1
+da 1 101 999
+qra 2
+qra 1
+qrm 2
